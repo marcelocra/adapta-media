@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+# Load NVM and use the correct Node.js version
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+npx lint-staged
