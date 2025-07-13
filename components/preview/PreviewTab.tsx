@@ -9,6 +9,7 @@ import { getAllAds } from "@/lib/ads";
 import { initializeCamera, stopCamera } from "@/lib/camera";
 import type { Ad } from "@/types";
 import WebcamFeed from "./Webcam";
+import { Display } from "./display/display";
 
 export function PreviewTab() {
   const [activeAd, setActiveAd] = useState<Ad | null>(null);
@@ -56,7 +57,9 @@ export function PreviewTab() {
 
   return (
     <div className="grid grid-cols-12 gap-4">
-      <div className="col-span-8 dark:bg-gray-900 p-4">DISPLAY</div>
+      <div className="col-span-8 dark:bg-gray-900 p-4">
+        <Display />
+      </div>
       <div className="col-span-4 dark:bg-gray-900 p-4">
         <WebcamFeed />
       </div>
