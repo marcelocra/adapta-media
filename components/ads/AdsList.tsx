@@ -410,7 +410,6 @@ export function AdsList() {
               <TableHead>Título</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-center">Pessoas</TableHead>
-              <TableHead className="text-center">Duração</TableHead>
               <TableHead>Data</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
@@ -450,13 +449,7 @@ export function AdsList() {
                 <TableCell className="text-center">
                   <div className="flex items-center justify-center gap-1">
                     <Users className="h-4 w-4 text-gray-400" />
-                    <span>{record.webcam.deepface.total}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-center">
-                  <div className="flex items-center justify-center gap-1">
-                    <Clock className="h-4 w-4 text-gray-400" />
-                    <span>{record.duration}s</span>
+                    <span>{record.webcam.yolo.total}</span>
                   </div>
                 </TableCell>
                 <TableCell>
