@@ -6,6 +6,8 @@ This document provides essential information for an AI agent to effectively work
 
 This is a [Next.js](https://nextjs.org/) project created using the `shadcn` package, as indicated in the `README.md`. It uses TypeScript for type safety and Tailwind CSS for styling. The project is configured with internationalization (i18n) using `typesafe-i18n`.
 
+The application follows a modern feature-based architecture with centralized state management using React Context.
+
 ## Key Technologies
 
 - **Framework:** [Next.js](https://nextjs.org/)
@@ -13,6 +15,7 @@ This is a [Next.js](https://nextjs.org/) project created using the `shadcn` pack
 - **UI Components:** [shadcn/ui](https://ui.shadcn.com/), [Radix UI](https://www.radix-ui.com/)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 - **Internationalization (i18n):** [typesafe-i18n](https://github.com/ivanhofer/typesafe-i18n)
+- **State Management:** React Context API
 - **Package Manager:** [pnpm](https://pnpm.io/)
 - **Testing:** [Vitest](https://vitest.dev/)
 - **Linting:** [ESLint](https://eslint.org/)
@@ -21,11 +24,25 @@ This is a [Next.js](https://nextjs.org/) project created using the `shadcn` pack
 
 ## Directory Structure
 
+### Core Application
+
 - `app/`: Contains the core application logic, following the Next.js App Router structure.
-- `components/`: Houses reusable React components, organized by feature.
+- `components/`: Shared UI components, global providers, and reusable elements.
+- `contexts/`: React Context providers for global state management.
 - `hooks/`: Custom React hooks for shared logic.
+- `lib/`: Utility functions, shared business logic, and helper functions.
+
+### Feature-Based Organization
+
+- `features/`: Feature-specific modules organized by domain:
+  - `features/{feature}/api/`: API calls and data fetching logic
+  - `features/{feature}/components/`: Feature-specific React components
+  - `features/{feature}/hooks/`: Feature-specific custom hooks
+  - `features/{feature}/types/`: Feature-specific TypeScript type definitions
+
+### Configuration & Assets
+
 - `i18n/`: Internationalization files for different languages.
-- `lib/`: Utility functions, business logic, and other shared code.
 - `public/`: Static assets like images and fonts.
 - `types/`: Global TypeScript type definitions.
 
@@ -87,6 +104,52 @@ To automatically format the code, use:
 pnpm format
 ```
 
+## Architecture Patterns
+
+### Feature-Based Structure
+
+- Each feature is self-contained within `features/{feature}/`
+- Components, hooks, types, and API logic are co-located by feature
+- Shared utilities and components remain in global directories
+
+### State Management
+
+- **Global State:** React Context providers in `contexts/` (e.g., `TabContext`, `LanguageProvider`)
+- **Local State:** Feature-specific hooks in `features/{feature}/hooks/`
+- **Server State:** API functions in `features/{feature}/api/`
+
+### Import Conventions
+
+- Use named exports for better tree-shaking: `export function Component() {}`
+- Import hooks from their source: `import { useLanguage } from "@/components/LanguageProvider"`
+- Feature imports: `import { useAds } from "@/features/ads/hooks/useAds"`
+
+## Current State & Opportunities
+
+### ✅ Implemented
+
+- Feature-based architecture with proper separation of concerns
+- Context-based state management for tab navigation
+- Centralized utility functions (e.g., `getStatusColor` in `lib/utils.ts`)
+- Consistent import paths and component organization
+- TypeScript types properly scoped to features
+
+### 🚀 Improvement Opportunities
+
+- **Utility Functions:** Move `formatNumber` and `formatCurrency` from components to `lib/utils.ts`
+- **Type Safety:** Replace `string` with union types for better type safety (e.g., `TabId = "ads" | "chat" | "preview"`)
+- **URL Persistence:** Sync tab state with URL parameters for better UX
+- **Cleanup:** Remove deprecated `hooks/useLanguage.ts` and empty component folders
+- **Performance:** Add memoization for expensive operations and component re-renders
+
+### 📋 Missing Features
+
+- Error boundaries for better error handling
+- Loading states and error states throughout the application
+- Comprehensive test coverage for feature hooks and components
+- Accessibility improvements (ARIA labels, keyboard navigation)
+- SEO optimizations and meta tag management
+
 ## Coding Style and Conventions
 
 - Follow the existing coding style and conventions.
@@ -94,3 +157,5 @@ pnpm format
 - Ensure all new code is properly typed with TypeScript.
 - Add tests for new features and bug fixes in the `lib/__tests__` directory.
 - Keep the i18n files in `i18n/` updated with any new text.
+- Place feature-specific code in the appropriate `features/{feature}/` directory.
+- Use React Context for global state, custom hooks for feature logic.

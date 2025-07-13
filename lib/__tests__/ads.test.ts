@@ -5,8 +5,8 @@ import {
   searchAds,
   filterAds,
   calculateAdMetrics,
-} from "../ads";
-import type { FilterOptions } from "@/types";
+} from "@/features/ads/api/ads";
+import type { FilterOptions } from "@/features/ads/types";
 
 describe("ads", () => {
   describe("getAllAds", () => {

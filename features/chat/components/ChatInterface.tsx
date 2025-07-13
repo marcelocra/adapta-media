@@ -1,62 +1,22 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Bot, User } from "lucide-react";
-import type { ChatMessage } from "@/types";
-import { useLanguage } from "@/hooks/useLanguage";
-import { getChatHistory, addMessage, sendMessageToAI } from "@/lib/chat";
+import { useChat } from "@/features/chat/hooks/useChat";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export function ChatInterface() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputValue, setInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
-
-  useEffect(() => {
-    if (!isInitialized) {
-      const history = getChatHistory();
-      if (history.length === 0) {
-        // Add welcome message
-        const welcomeMessage = addMessage(t.chat.welcome, "assistant");
-        setMessages([welcomeMessage]);
-      } else {
-        setMessages(history);
-      }
-      setIsInitialized(true);
-    }
-  }, [t.chat.welcome, isInitialized]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const handleSendMessage = async () => {
-    if (!inputValue.trim() || isLoading) return;
-
-    const userMessage = addMessage(inputValue.trim(), "user");
-    setMessages(getChatHistory());
-    setInputValue("");
-    setIsLoading(true);
-
-    try {
-      const aiResponse = await sendMessageToAI(userMessage.content);
-      const assistantMessage = addMessage(aiResponse, "assistant");
-      setMessages(getChatHistory());
-    } catch (error) {
-      const errorMessage = addMessage(
-        "Sorry, I encountered an error. Please try again.",
-        "assistant",
-      );
-      setMessages(getChatHistory());
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    messages,
+    inputValue,
+    setInputValue,
+    isLoading,
+    messagesEndRef,
+    handleSendMessage,
+  } = useChat();
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {

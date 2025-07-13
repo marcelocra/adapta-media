@@ -1,4 +1,4 @@
-import type { ChatMessage } from "@/types";
+import type { ChatMessage } from "@/features/chat/types";
 
 let messageHistory: ChatMessage[] = [];
 

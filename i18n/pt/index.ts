@@ -54,6 +54,14 @@ const pt = {
     cameraPreview: "Visualização da Câmera",
     noActiveAd: "Nenhum anúncio ativo selecionado",
     cameraError: "Erro ao acessar a câmera",
+    nextAdButton: "Próximo Anúncio",
+    impressions: "impressões",
+    clicks: "cliques",
+    ctr: "CTR",
+    stopCamera: "Parar",
+    startCamera: "Iniciar",
+    cameraPlaceholder:
+      'Clique em "Iniciar" para começar a visualização da câmera',
   },
   settings: {
     language: "Idioma",

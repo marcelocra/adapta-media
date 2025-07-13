@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
-import { useLanguage } from "@/hooks/useLanguage";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export function LanguageToggle() {
   const { language, changeLanguage, t } = useLanguage();

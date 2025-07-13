@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,31 +27,18 @@ import {
   DollarSign,
 } from "lucide-react";
 import { AdDetails } from "./AdDetails";
-import type { Ad } from "@/types";
-import { useLanguage } from "@/hooks/useLanguage";
+import type { Ad } from "@/features/ads/types";
+import { useLanguage } from "@/components/LanguageProvider";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
-import { getAllAds, searchAds, filterAds } from "@/lib/ads";
+import { useAds } from "@/features/ads/hooks/useAds";
+import { getStatusColor } from "@/lib/utils";
 
 export function AdsList() {
   const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilters, setStatusFilters] = useState<Ad["status"][]>([]);
   const { t } = useLanguage();
   const { saveScrollPosition, restoreScrollPosition } = useScrollPosition();
-
-  const ads = useMemo(() => {
-    let filteredAds = getAllAds();
-
-    if (searchQuery.trim()) {
-      filteredAds = searchAds(searchQuery);
-    }
-
-    if (statusFilters.length > 0) {
-      filteredAds = filterAds({ status: statusFilters });
-    }
-
-    return filteredAds;
-  }, [searchQuery, statusFilters]);
+  const { ads, searchQuery, setSearchQuery, statusFilters, setStatusFilters } =
+    useAds();
 
   const handleViewDetails = (ad: Ad) => {
     saveScrollPosition();
@@ -61,17 +48,6 @@ export function AdsList() {
   const handleBack = () => {
     setSelectedAd(null);
     setTimeout(restoreScrollPosition, 0);
-  };
-
-  const getStatusColor = (status: Ad["status"]) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-      case "paused":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-      case "completed":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
-    }
   };
 
   const formatNumber = (num: number) => {

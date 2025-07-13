@@ -11,9 +11,10 @@ import {
   DollarSign,
   Target,
 } from "lucide-react";
-import type { Ad } from "@/types";
-import { useLanguage } from "@/hooks/useLanguage";
-import { calculateAdMetrics } from "@/lib/ads";
+import type { Ad } from "@/features/ads/types";
+import { useLanguage } from "@/components/LanguageProvider";
+import { calculateAdMetrics } from "@/features/ads/api/ads";
+import { getStatusColor } from "@/lib/utils";
 
 interface AdDetailsProps {
   ad: Ad;
@@ -23,17 +24,6 @@ interface AdDetailsProps {
 export function AdDetails({ ad, onBack }: AdDetailsProps) {
   const { t } = useLanguage();
   const metrics = calculateAdMetrics(ad);
-
-  const getStatusColor = (status: Ad["status"]) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-      case "paused":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-      case "completed":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
-    }
-  };
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;

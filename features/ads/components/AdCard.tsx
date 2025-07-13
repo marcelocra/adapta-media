@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, MousePointer, Eye, DollarSign } from "lucide-react";
-import type { Ad } from "@/types";
-import { useLanguage } from "@/hooks/useLanguage";
+import type { Ad } from "@/features/ads/types";
+import { useLanguage } from "@/components/LanguageProvider";
+import { getStatusColor } from "@/lib/utils";
 
 interface AdCardProps {
   ad: Ad;
@@ -14,17 +15,6 @@ interface AdCardProps {
 
 export function AdCard({ ad, onViewDetails }: AdCardProps) {
   const { t } = useLanguage();
-
-  const getStatusColor = (status: Ad["status"]) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-      case "paused":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-      case "completed":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
-    }
-  };
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;

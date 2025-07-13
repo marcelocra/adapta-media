@@ -1,4 +1,4 @@
-import type { Ad, FilterOptions } from "@/types";
+import type { Ad, FilterOptions } from "@/features/ads/types";
 
 // Mock data for demonstration
 const mockAds: Ad[] = [

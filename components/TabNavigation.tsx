@@ -2,15 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { BarChart3, MessageCircle, Eye } from "lucide-react";
-import { useLanguage } from "@/hooks/useLanguage";
+import { useLanguage } from "@/components/LanguageProvider";
+import { useTab } from "@/contexts/TabContext";
 
-interface TabNavigationProps {
-  activeTab: string;
-  onTabChange: (tab: string) => void;
-}
-
-export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
+export function TabNavigation() {
   const { t } = useLanguage();
+  const { activeTab, setActiveTab } = useTab();
 
   const tabs = [
     { id: "ads", label: t.tabs.ads, icon: BarChart3 },
@@ -27,7 +24,7 @@ export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
             key={tab.id}
             variant={activeTab === tab.id ? "default" : "ghost"}
             className="flex-1 flex items-center gap-2 rounded-none h-12"
-            onClick={() => onTabChange(tab.id)}
+            onClick={() => setActiveTab(tab.id)}
           >
             <Icon className="h-4 w-4" />
             <span className="text-sm font-medium">{tab.label}</span>

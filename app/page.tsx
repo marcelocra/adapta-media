@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { TabNavigation } from "@/components/TabNavigation";
 import { LanguageToggle } from "@/components/LanguageToggle";
-import { AdsList } from "@/components/ads/AdsList";
-import { ChatInterface } from "@/components/chat/ChatInterface";
-import { PreviewTab } from "@/components/preview/PreviewTab";
-import { useLanguage } from "@/hooks/useLanguage";
+import { AdsList } from "@/features/ads/components/AdsList";
+import { ChatInterface } from "@/features/chat/components/ChatInterface";
+import { PreviewTab } from "@/features/preview/components/PreviewTab";
+import { useLanguage } from "@/components/LanguageProvider";
+import { useTab } from "@/contexts/TabContext";
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState("ads");
+  const { activeTab, setActiveTab } = useTab();
   const { t } = useLanguage();
 
   const renderTabContent = () => {
@@ -36,7 +36,7 @@ export default function HomePage() {
           </h1>
           <LanguageToggle />
         </div>
-        <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+        <TabNavigation />
       </header>
 
       <main className="container px-4 py-6">{renderTabContent()}</main>

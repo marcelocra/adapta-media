@@ -54,6 +54,13 @@ const en = {
     cameraPreview: "Camera Preview",
     noActiveAd: "No active ad selected",
     cameraError: "Error accessing camera",
+    nextAdButton: "Next Ad",
+    impressions: "impressions",
+    clicks: "clicks",
+    ctr: "CTR",
+    stopCamera: "Stop",
+    startCamera: "Start",
+    cameraPlaceholder: 'Click "Start" to begin camera preview',
   },
   settings: {
     language: "Language",

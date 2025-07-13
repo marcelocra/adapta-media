@@ -4,7 +4,7 @@ import {
   addMessage,
   clearChatHistory,
   sendMessageToAI,
-} from "../chat";
+} from "@/features/chat/api/chat";
 
 describe("chat", () => {
   beforeEach(() => {
