@@ -57,10 +57,10 @@ export function PreviewTab() {
 
   return (
     <div className="grid grid-cols-12 ">
-      <div className="col-span-8 dark:bg-gray-900 p-4">
+      <div className="col-span-8 dark:bg-gray-900 p-2">
         <Display />
       </div>
-      <div className="col-span-4 dark:bg-gray-900 p-4">
+      <div className="col-span-4 dark:bg-gray-900 p-2">
         <WebcamFeed />
       </div>
     </div>
