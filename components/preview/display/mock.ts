@@ -42,7 +42,7 @@ export const Ads: IAd[] = [
     title: "McDonald's McCrispy",
     type: "VIDEO",
     description:
-      "Este vídeo é um anúncio da Coca-Cola Zero Açúcar. Ele mostra um close-up de uma garrafa de Coca-Cola Zero Açúcar sendo aberta e derramada em um copo com gelo. O anúncio termina com o slogan 'Hora de experimentar a melhor Coca-Cola de todas?'",
+      "Este vídeo é um anúncio do novo sanduíche McCrispy do McDonald's. Ele mostra o sanduíche sendo montado e destaca que é feito com peito de frango. O anúncio também informa que o McCrispy está disponível em duas versões: Original e Creamy BBQ",
     source: "/ads/3.mp4",
     seconds: 5,
   },
