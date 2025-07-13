@@ -83,6 +83,16 @@ export function filterAds(filters: FilterOptions): Ad[] {
     );
   }
 
+  // Apply search query if provided
+  if (filters.searchQuery) {
+    const lowerQuery = filters.searchQuery.toLowerCase();
+    filtered = filtered.filter(
+      (ad) =>
+        ad.title.toLowerCase().includes(lowerQuery) ||
+        ad.campaign.toLowerCase().includes(lowerQuery),
+    );
+  }
+
   return filtered;
 }
 

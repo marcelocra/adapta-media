@@ -22,6 +22,7 @@ export interface ChatMessage {
 export interface FilterOptions {
   status?: Ad["status"][];
   campaign?: string;
+  searchQuery?: string;
   dateRange?: {
     start: Date;
     end: Date;
