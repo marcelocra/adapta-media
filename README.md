@@ -120,3 +120,87 @@ uvicorn main:app --reload
 - **🚇 Transporte**: Efetividade de anúncios em estações e terminais
 - **🏟️ Eventos**: Engajamento de audiência em patrocínios
 - **🏙️ Mídia Exterior**: Performance de outdoors e totens digitais
+
+## 📁 Estrutura do Frontend
+
+### **Diretórios Principais**
+
+#### **`app/` - Next.js App Router**
+
+- `layout.tsx` - Layout global da aplicação
+- `page.tsx` - Página principal
+- `globals.css` - Estilos globais
+
+#### **`components/` - Componentes React**
+
+```
+components/
+├── ui/                    # Componentes de interface (shadcn/ui)
+├── ads/                   # Componentes para anúncios
+│   ├── AdCard.tsx
+│   ├── AdDetails.tsx
+│   └── AdsList.tsx
+├── chat/                  # Interface de chat com IA
+│   └── ChatInterface.tsx
+├── preview/               # Visualização em tempo real
+│   ├── PreviewTab.tsx
+│   ├── Webcam.tsx
+│   └── display/
+└── json-view/            # Visualização de dados JSON
+```
+
+#### **`hooks/` - Custom Hooks**
+
+- `useInsightsWebSocket.ts` - WebSocket para insights
+- `useJobPolling.ts` - Polling de jobs
+- `useLanguage.ts` - Gerenciamento de idioma
+- `useTypewriterEffect.ts` - Efeito de digitação
+
+#### **`lib/` - Utilitários e Lógica**
+
+- `ads.ts` - Lógica de anúncios
+- `camera.ts` - Gerenciamento de câmera
+- `chat.ts` - Funcionalidades de chat
+- `__tests__/` - Testes unitários
+
+#### **`interfaces/` - Tipos TypeScript**
+
+- `ads.ts` - Tipos para anúncios
+- `display.ts` - Tipos para display
+- `webcam.ts` - Tipos para webcam
+
+#### **`i18n/` - Internacionalização**
+
+```
+i18n/
+├── en/index.ts           # Traduções em inglês
+├── pt/index.ts           # Traduções em português
+└── index.ts              # Configuração principal
+```
+
+#### **`context/` - Contextos React**
+
+- `WebCamContext.tsx` - Contexto da webcam
+
+#### **`public/` - Assets Estáticos**
+
+- `ads/` - Vídeos de anúncios
+- Ícones SVG
+
+### **Configurações**
+
+- `next.config.ts` - Configuração do Next.js
+- `tailwind.config.ts` - Configuração do Tailwind
+- `tsconfig.json` - Configuração do TypeScript
+- `vitest.config.ts` - Configuração de testes
+
+### **Arquitetura**
+
+Esta estrutura segue as melhores práticas do Next.js 14 com App Router, separando claramente responsabilidades:
+
+- **Separação de Responsabilidades**: Cada diretório tem uma função específica
+- **Reutilização**: Componentes modulares e hooks customizados
+- **Tipagem**: TypeScript em toda a aplicação
+- **Testes**: Cobertura de testes unitários
+- **Internacionalização**: Suporte a múltiplos idiomas
+- **Escalabilidade**: Estrutura preparada para crescimento
