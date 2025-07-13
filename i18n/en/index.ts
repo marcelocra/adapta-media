@@ -14,12 +14,12 @@ const en = {
     add: "Add",
   },
   tabs: {
-    ads: "Ads",
+    ads: "Displays",
     chat: "Chat",
     preview: "Preview",
   },
   ads: {
-    title: "Advertisements",
+    title: "Displays",
     searchPlaceholder: "Search ads...",
     noResults: "No ads found",
     status: {

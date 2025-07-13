@@ -216,7 +216,7 @@ export function AdsList() {
 
       const data = await response.json();
       setRecords(data.records);
-      setSelectedRecord(data.records?.[0] || null);
+      // setSelectedRecord(data.records?.[0] || null);
       setPagination({
         page: data.page,
         limit: data.limit,
@@ -365,7 +365,7 @@ export function AdsList() {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Displays Table</h1>
+        {/* <h1 className="text-2xl font-bold text-gray-900">Displays Table</h1> */}
         <p className="text-gray-600 mt-2">
           Total de {pagination.total} registros | Página {pagination.page} de{" "}
           {pagination.pages}

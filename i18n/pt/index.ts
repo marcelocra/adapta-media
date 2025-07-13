@@ -14,13 +14,13 @@ const pt = {
     add: "Adicionar",
   },
   tabs: {
-    ads: "Anúncios",
+    ads: "Exibições",
     chat: "Chat",
     preview: "Visualizar",
   },
   ads: {
-    title: "Anúncios",
-    searchPlaceholder: "Pesquisar anúncios...",
+    title: "Exibições",
+    searchPlaceholder: "Pesquisar exibições...",
     noResults: "Nenhum anúncio encontrado",
     status: {
       active: "Ativo",
