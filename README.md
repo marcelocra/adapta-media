@@ -88,8 +88,8 @@ O **Adapta Mídia** é uma solução inovadora que combina **visão computaciona
 ### 1. Frontend (este repositório)
 
 ```bash
-git clone https://github.com/velrino/adapta-hackathon-front
-cd adapta-hackathon-front
+git clone https://github.com/marcelocra/adapta-midia-frontend
+cd adapta-midia-frontend
 pnpm install
 pnpm dev
 ```
