@@ -14,7 +14,7 @@ export const Display = ({ data = Ads }) => {
 
   // Determine display duration
   const getDisplayDuration = (item: IAd) => {
-    return 5;
+    return 2;
   };
 
   const { webCamData } = useWebcam();
@@ -75,25 +75,23 @@ export const Display = ({ data = Ads }) => {
   useEffect(() => {
     if (data.length === 0) return;
 
-    const duration = getDisplayDuration(currentItem);
+    const currentAd = data[currentIndex % data.length];
+    const duration = getDisplayDuration(currentAd);
     setTimeRemaining(duration);
 
     const timer = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
-          logItemShowed();
+          // logItemShowed();
           setCurrentIndex((prevIndex) => (prevIndex + 1) % data.length);
-
-          const newAd = data[(currentIndex + 1) % data.length];
-          console.log(JSON.stringify({ newAd, data }));
-          return getDisplayDuration(newAd);
+          return 0;
         }
         return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [currentIndex, data, currentItem, logItemShowed]);
+  }, [currentIndex, data]);
 
   if (!currentItem) return null;
 
@@ -155,8 +153,17 @@ export const Display = ({ data = Ads }) => {
   };
 
   return (
-    <div className="w-full aspect-video bg-black rounded-lg overflow-hidden shadow-2xl">
-      {renderAdvertisement(currentItem)}
-    </div>
+    <>
+      <div className="w-full aspect-videol">
+        {renderAdvertisement(currentItem)}
+      </div>
+      <div
+        className="text-sm font-bold
+"
+      >
+        {currentItem.title}
+      </div>
+      <div className="text-xs">{currentItem.description}</div>
+    </>
   );
 };

@@ -2,6 +2,15 @@ import { IAd } from "@/interfaces/ads";
 
 export const Ads: IAd[] = [
   {
+    _id: "64d8c9c79c24cdd0e15b32a6",
+    title: "Coca-Cola® Zero Sugar",
+    type: "VIDEO",
+    description:
+      "Este vídeo é um anúncio da Coca-Cola Zero Açúcar. Ele mostra um close-up de uma garrafa de Coca-Cola Zero Açúcar sendo aberta e derramada em um copo com gelo. O anúncio termina com o slogan 'Hora de experimentar a melhor Coca-Cola de todas?'",
+    source: "/ads/0.mp4",
+    seconds: 5,
+  },
+  {
     _id: "67f9c13b1d68c92defe72fd0",
     title: "24h - Black Friday Colombo | Rodrigo Faro",
     type: "VIDEO",
@@ -25,7 +34,7 @@ export const Ads: IAd[] = [
   //   type: "VIDEO",
   //   description:
   //     "Este vídeo é um anúncio do Itaú Seguro Auto. Ele mostra um carro azul sendo atingido por trás, com o vidro quebrando. Em seguida, o logotipo do Itaú Seguro Auto aparece com o slogan 'Feito para você ficar tranquilo'",
-  //   source: "/ads/3.mp4",
+  //   source: "/ads/2.mp4",
   //   seconds: 5,
   // },
   {
