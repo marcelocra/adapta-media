@@ -31,7 +31,7 @@ import type { Ad } from "@/features/ads/types";
 import { useLanguage } from "@/components/LanguageProvider";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { useAds } from "@/features/ads/hooks/useAds";
-import { getStatusColor } from "@/lib/utils";
+import { getStatusColor, formatNumber, formatCurrency } from "@/lib/utils";
 
 export function AdsList() {
   const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
@@ -48,19 +48,6 @@ export function AdsList() {
   const handleBack = () => {
     setSelectedAd(null);
     setTimeout(restoreScrollPosition, 0);
-  };
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-    return num.toLocaleString();
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(amount);
   };
 
   if (selectedAd) {

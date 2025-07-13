@@ -25,19 +25,6 @@ export function AdDetails({ ad, onBack }: AdDetailsProps) {
   const { t } = useLanguage();
   const metrics = calculateAdMetrics(ad);
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-    return num.toLocaleString();
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(amount);
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">

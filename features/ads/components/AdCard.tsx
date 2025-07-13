@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp, MousePointer, Eye, DollarSign } from "lucide-react";
 import type { Ad } from "@/features/ads/types";
 import { useLanguage } from "@/components/LanguageProvider";
-import { getStatusColor } from "@/lib/utils";
+import { getStatusColor, formatNumber, formatCurrency } from "@/lib/utils";
 
 interface AdCardProps {
   ad: Ad;
@@ -15,19 +15,6 @@ interface AdCardProps {
 
 export function AdCard({ ad, onViewDetails }: AdCardProps) {
   const { t } = useLanguage();
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-    return num.toLocaleString();
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(amount);
-  };
 
   return (
     <Card className="w-full hover:shadow-md transition-shadow">

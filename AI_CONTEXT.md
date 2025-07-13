@@ -130,15 +130,15 @@ pnpm format
 
 - Feature-based architecture with proper separation of concerns
 - Context-based state management for tab navigation
-- Centralized utility functions (e.g., `getStatusColor` in `lib/utils.ts`)
+- Centralized utility functions (e.g., `getStatusColor`, `formatNumber`, `formatCurrency` in `lib/utils.ts`)
 - Consistent import paths and component organization
 - TypeScript types properly scoped to features
 - Co-located test files next to their corresponding source files
 - Test import paths updated to match new feature structure
+- Comprehensive test coverage for utility functions
 
 ### 🚀 Improvement Opportunities
 
-- **Utility Functions:** Move `formatNumber` and `formatCurrency` from components to `lib/utils.ts` (duplicated in AdCard, AdsList, AdDetails)
 - **Type Safety:** Replace `string` with union types for better type safety (e.g., `TabId = "ads" | "chat" | "preview"` in TabContext)
 - **URL Persistence:** Sync tab state with URL parameters for better UX
 - **Cleanup:** Empty component folders exist (`components/ads/`, `components/chat/`, `components/preview/`)
