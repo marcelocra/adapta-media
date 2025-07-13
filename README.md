@@ -56,7 +56,6 @@ O **Adapta Mídia** é uma solução inovadora que combina **visão computaciona
 
 - **WebRTC** - Captura de câmera
 - **WebSocket** - Streaming de dados em tempo real
-- **Docker** - Containerização
 - **pnpm** - Gerenciador de pacotes
 
 ## 📁 Repositórios
