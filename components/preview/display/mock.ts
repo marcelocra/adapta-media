@@ -69,7 +69,7 @@ export const Ads: IAd[] = [
     title: "Club Social – BUDDIES",
     type: "VIDEO",
     description:
-      "Este vídeo é um comercial do biscoito Club Social. Ele mostra uma pessoa quebrando um biscoito ao meio e depois comendo-o [00:00]. O vídeo termina com o slogan 'Quando a fome bate, Club Social. Inconfundível!'",
+      "Este vídeo é um comercial do biscoito Club Social. Ele mostra uma pessoa quebrando um biscoito ao meio e depois comendo-o. O vídeo termina com o slogan 'Quando a fome bate, Club Social. Inconfundível!'",
     source: "/ads/6.mp4",
     seconds: 5,
   },

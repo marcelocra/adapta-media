@@ -56,7 +56,7 @@ export function PreviewTab() {
   };
 
   return (
-    <div className="grid grid-cols-12 gap-4">
+    <div className="grid grid-cols-12 ">
       <div className="col-span-8 dark:bg-gray-900 p-4">
         <Display />
       </div>

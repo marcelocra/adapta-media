@@ -284,12 +284,12 @@ export default function WebcamFeed() {
   }, [startDetection]);
 
   return (
-    <div className="relative rounded-lg overflow-hidden">
+    <div className="relative rounded-lg overflow-hidden aspect-video w-full">
       <canvas
         ref={canvasRef}
-        className="w-full h-96 object-cover"
-        width={640}
-        height={480}
+        className="w-full h-full object-cover"
+        width={1280} // Ajustado para 16:9 (ex: 1280x720)
+        height={720}
       />
       <video ref={videoRef} className="hidden" autoPlay muted playsInline />
       <div className="absolute top-4 left-4 bg-black bg-opacity-75 text-white px-4 py-2 rounded-lg text-sm font-medium">
