@@ -29,8 +29,6 @@ export const Display = ({ data = Ads }) => {
 
     const webcamLogs: IWebcamData | null = webCamDataRef.current;
 
-    // if (!webcamLogs?.yolo_summary || webcamLogs?.deepface_summary) return;
-
     const body: IDisplayCreateRequest = {
       webcam: {
         yolo: webcamLogs?.yolo_summary as any,
@@ -44,12 +42,7 @@ export const Display = ({ data = Ads }) => {
       external_id: String(currentItem._id),
     };
 
-    // console.log("Showed", body);
-    // console.log(JSON.stringify(body));
-
-    // if (body) {
-    //   return;
-    // }
+    console.log("ADS", JSON.stringify(body));
 
     try {
       const response = await fetch(`http://${API_URL}/display`, {

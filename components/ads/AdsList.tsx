@@ -1,240 +1,378 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Eye, Calendar, Users, Clock, X } from "lucide-react";
+import { IApiDisplayRecord } from "@/interfaces/display";
+import { ApiPaginationDefault, IApiPagination } from "@/interfaces/pagination";
+import JsonViewComponent from "../json-view/JsonViewComponent";
+import { API_URL, cn } from "@/lib/utils";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuCheckboxItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Search,
-  Filter,
-  TrendingUp,
-  MousePointer,
-  Eye,
-  DollarSign,
-} from "lucide-react";
-import { AdDetails } from "./AdDetails";
-import type { Ad } from "@/types";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useScrollPosition } from "@/hooks/useScrollPosition";
-import { getAllAds, searchAds, filterAds } from "@/lib/ads";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import MarkdownPreview from "@uiw/react-markdown-preview";
+import { Spinner } from "../ui/spinner";
 
 export function AdsList() {
-  const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilters, setStatusFilters] = useState<Ad["status"][]>([]);
-  const { t } = useLanguage();
-  const { saveScrollPosition, restoreScrollPosition } = useScrollPosition();
+  const [records, setRecords] = useState<IApiDisplayRecord[]>([]);
+  const [selectedRecord, setSelectedRecord] =
+    useState<IApiDisplayRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [pagination, setPagination] =
+    useState<IApiPagination>(ApiPaginationDefault);
 
-  const ads = useMemo(() => {
-    let filteredAds = getAllAds();
+  useEffect(() => {
+    fetchRecords();
+  }, []);
 
-    if (searchQuery.trim()) {
-      filteredAds = searchAds(searchQuery);
+  const fetchRecords = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`http://${API_URL}/display`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch records");
+      }
+
+      const data = await response.json();
+      setRecords(data.records);
+      setSelectedRecord(data.records?.[0] || null);
+      setPagination({
+        page: data.page,
+        limit: data.limit,
+        total: data.total,
+        pages: data.pages,
+        has_next: data.has_next,
+        has_prev: data.has_prev,
+      });
+    } catch (err) {
+      console.log({ DisplaysTableFetchRecords: err });
+    } finally {
+      setLoading(false);
     }
-
-    if (statusFilters.length > 0) {
-      filteredAds = filterAds({ status: statusFilters });
-    }
-
-    return filteredAds;
-  }, [searchQuery, statusFilters]);
-
-  const handleViewDetails = (ad: Ad) => {
-    saveScrollPosition();
-    setSelectedAd(ad);
   };
 
-  const handleBack = () => {
-    setSelectedAd(null);
-    setTimeout(restoreScrollPosition, 0);
+  const formatTimestamp = (timestamp: string) => {
+    return new Date(timestamp).toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
-  const getStatusColor = (status: Ad["status"]) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-      case "paused":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-      case "completed":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "approved":
+        return "bg-green-100 text-green-800";
+      case "rejected":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-    return num.toLocaleString();
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case "ADVERTISEMENT":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(amount);
+  const [generateInsightsLoading, setGenerateInsightsLoading] =
+    useState<boolean>(false);
+  const generateInsights = async () => {
+    try {
+      setGenerateInsightsLoading(true);
+      const response = await fetch(`http://${API_URL}/jobs/insights`, {
+        method: "POST",
+        body: JSON.stringify({ id: selectedRecord?._id }),
+      });
+      const data = await response.json();
+    } catch (error) {
+      console.error("Erro ao gerar insights:", error);
+    } finally {
+      setGenerateInsightsLoading(false);
+    }
   };
 
-  if (selectedAd) {
-    return <AdDetails ad={selectedAd} onBack={handleBack} />;
+  const [generateCopywriterLoading, setGenerateCopywriterLoading] =
+    useState<boolean>(false);
+  const generateCopywriter = async () => {
+    try {
+      setGenerateCopywriterLoading(true);
+      const response = await fetch(`http://${API_URL}/jobs/copywriter`, {
+        method: "POST",
+        body: JSON.stringify({ id: selectedRecord?._id }),
+      });
+      const data = await response.json();
+      // Atualize o estado do selectedRecord com o novo copywriter
+    } catch (error) {
+      console.error("Erro ao gerar copywriter:", error);
+    } finally {
+      setGenerateCopywriterLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Carregando registros...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder={t.ads.searchPlaceholder}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Filter className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuCheckboxItem
-              checked={statusFilters.includes("active")}
-              onCheckedChange={(checked) =>
-                setStatusFilters((prev) =>
-                  checked
-                    ? [...prev, "active"]
-                    : prev.filter((s) => s !== "active"),
-                )
-              }
-            >
-              {t.ads.status.active}
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={statusFilters.includes("paused")}
-              onCheckedChange={(checked) =>
-                setStatusFilters((prev) =>
-                  checked
-                    ? [...prev, "paused"]
-                    : prev.filter((s) => s !== "paused"),
-                )
-              }
-            >
-              {t.ads.status.paused}
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={statusFilters.includes("completed")}
-              onCheckedChange={(checked) =>
-                setStatusFilters((prev) =>
-                  checked
-                    ? [...prev, "completed"]
-                    : prev.filter((s) => s !== "completed"),
-                )
-              }
-            >
-              {t.ads.status.completed}
-            </DropdownMenuCheckboxItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <div className="container mx-auto p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Displays Table</h1>
+        <p className="text-gray-600 mt-2">
+          Total de {pagination.total} registros | Página {pagination.page} de{" "}
+          {pagination.pages}
+        </p>
       </div>
 
-      {ads.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">{t.ads.noResults}</p>
+      {error && (
+        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+          <p className="text-yellow-800">
+            ⚠️ Erro ao conectar com a API: {error}. Usando dados de exemplo.
+          </p>
         </div>
-      ) : (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t.ads.title}</TableHead>
-                <TableHead className="hidden sm:table-cell">
-                  {t.ads.details.campaign}
-                </TableHead>
-                <TableHead className="hidden md:table-cell">
-                  {t.ads.metrics.impressions}
-                </TableHead>
-                <TableHead className="hidden md:table-cell">
-                  {t.ads.metrics.clicks}
-                </TableHead>
-                <TableHead className="hidden lg:table-cell">
-                  {t.ads.metrics.ctr}
-                </TableHead>
-                <TableHead className="hidden lg:table-cell">
-                  {t.ads.metrics.spend}
-                </TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+      )}
+
+      <div className="rounded-md border">
+        <Table>
+          <TableCaption>
+            {pagination.total > 0
+              ? `${pagination.total} registros encontrados`
+              : "Nenhum registro encontrado"}
+          </TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">ID</TableHead>
+              <TableHead>Título</TableHead>
+              <TableHead>Tipo</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-center">Pessoas</TableHead>
+              <TableHead className="text-center">Duração</TableHead>
+              <TableHead>Data</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {records.map((record) => (
+              <TableRow key={record._id}>
+                <TableCell className="font-mono text-sm">
+                  {record._id.slice(-8)}
+                </TableCell>
+                <TableCell>
+                  <div className="max-w-xs">
+                    <p className="font-medium truncate">{record.title}</p>
+                    <p className="text-sm text-gray-500 truncate">
+                      {record.description}
+                    </p>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant="outline"
+                    className={getTypeColor(record.type)}
+                  >
+                    {record.type}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant="outline"
+                    className={getStatusColor(record.status)}
+                  >
+                    {record.status}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <Users className="h-4 w-4 text-gray-400" />
+                    <span>{record.webcam.deepface.total}</span>
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <Clock className="h-4 w-4 text-gray-400" />
+                    <span>{record.duration}s</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4 text-gray-400" />
+                    <span className="text-sm">
+                      {formatTimestamp(record.timestamp)}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedRecord(record)}
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    Ver Detalhes
+                  </Button>
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {ads.map((ad) => (
-                <TableRow key={ad.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{ad.title}</div>
-                      <div className="text-sm text-muted-foreground sm:hidden">
-                        {ad.campaign}
-                      </div>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {selectedRecord && (
+        <Dialog
+          open={true}
+          onOpenChange={(open) => {
+            if (!open) setSelectedRecord(null);
+          }}
+        >
+          <DialogContent className="max-w-[90vw] max-h-[90vh] overflow-y-auto">
+            <DialogHeader className="flex flex-row items-center justify-between gap-4">
+              <div className="flex items-center justify-between gap-4">
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "text-sm font-medium px-3 py-1 rounded-full border-2",
+                    getTypeColor(selectedRecord.type),
+                  )}
+                >
+                  {selectedRecord.type}
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "text-sm font-medium px-3 py-1 rounded-full border-2",
+                    getStatusColor(selectedRecord.status),
+                  )}
+                >
+                  {selectedRecord.status.toUpperCase()}
+                </Badge>
+              </div>
+            </DialogHeader>
+            <div className="mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+                <div className="rounded-lg">
+                  {/* <h2 className="text-xl font-bold mb-4">Json</h2> */}
+                  <JsonViewComponent record={selectedRecord} />{" "}
+                </div>
+
+                <div className="p-4 rounded-lg">
+                  <h2 className="text-xl font-bold mb-4">
+                    LLM (NVIDIA llama-3.3-nemotron-super-49b-v1 NIM)
+                  </h2>
+                  <div className="flex gap-4 items-start">
+                    <Accordion type="single" className="w-full">
+                      {selectedRecord.insights && (
+                        <AccordionItem value="insights">
+                          <AccordionTrigger>Insights</AccordionTrigger>
+                          <AccordionContent className="prose max-w-none max-h-[400px] overflow-y-auto">
+                            <MarkdownPreview
+                              source={selectedRecord.insights}
+                              className="bg-white text-gray-900 prose"
+                            />
+                          </AccordionContent>
+                        </AccordionItem>
+                      )}
+                      {selectedRecord?.copywriter && (
+                        <AccordionItem value="copywriter">
+                          <AccordionTrigger>Copywriter</AccordionTrigger>
+                          <AccordionContent className="prose max-w-none max-h-[400px] overflow-y-auto">
+                            <MarkdownPreview
+                              source={selectedRecord?.copywriter}
+                            />
+                          </AccordionContent>
+                        </AccordionItem>
+                      )}
+                    </Accordion>
+
+                    {/* Coluna de botões */}
+                    <div className="flex flex-col gap-2 sticky top-4">
+                      {!selectedRecord.insights && (
+                        <button
+                          onClick={() => generateInsights()}
+                          className="px-4 py-2 rounded text-white whitespace-nowrap flex items-center gap-2 transition-colors
+               bg-green-500 hover:bg-green-600 
+               disabled:bg-green-900 disabled:cursor-not-allowed"
+                          disabled={generateInsightsLoading}
+                        >
+                          {generateInsightsLoading && <Spinner size={15} />}
+                          <span>
+                            {generateInsightsLoading
+                              ? "Gerando Insights..."
+                              : "Gerar Insights"}
+                          </span>
+                        </button>
+                      )}
+
+                      {!selectedRecord.copywriter && (
+                        <button
+                          onClick={() => generateCopywriter()}
+                          className="px-4 py-2 rounded text-white whitespace-nowrap flex items-center gap-2 transition-colors
+               bg-green-500 hover:bg-green-600 
+               disabled:bg-green-900 disabled:cursor-not-allowed"
+                          disabled={generateCopywriterLoading}
+                        >
+                          {generateCopywriterLoading && <Spinner size={15} />}
+                          <span>
+                            {generateCopywriterLoading
+                              ? "Gerando Copywriter..."
+                              : "Gerar Copywriter"}
+                          </span>
+                        </button>
+                      )}
                     </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    {ad.campaign}
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    <div className="flex items-center gap-1">
-                      <Eye className="h-3 w-3 text-blue-500" />
-                      {formatNumber(ad.impressions)}
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    <div className="flex items-center gap-1">
-                      <MousePointer className="h-3 w-3 text-green-500" />
-                      {formatNumber(ad.clicks)}
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    <div className="flex items-center gap-1">
-                      <TrendingUp className="h-3 w-3 text-orange-500" />
-                      {ad.ctr.toFixed(2)}%
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    <div className="flex items-center gap-1">
-                      <DollarSign className="h-3 w-3 text-red-500" />
-                      {formatCurrency(ad.spend)}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={getStatusColor(ad.status)}>
-                      {t.ads.status[ad.status]}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleViewDetails(ad)}
-                    >
-                      {t.common.viewDetails}
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {pagination.total > pagination.limit && (
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-gray-500">
+            Mostrando {(pagination.page - 1) * pagination.limit + 1} até{" "}
+            {Math.min(pagination.page * pagination.limit, pagination.total)} de{" "}
+            {pagination.total} registros
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" disabled={!pagination.has_prev}>
+              Anterior
+            </Button>
+            <Button variant="outline" size="sm" disabled={!pagination.has_next}>
+              Próximo
+            </Button>
+          </div>
         </div>
       )}
     </div>

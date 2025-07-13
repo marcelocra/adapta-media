@@ -9,7 +9,7 @@ import { PreviewTab } from "@/components/preview/PreviewTab";
 import { useLanguage } from "@/hooks/useLanguage";
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState("preview");
+  const [activeTab, setActiveTab] = useState("ads");
   const { t } = useLanguage();
 
   const renderTabContent = () => {

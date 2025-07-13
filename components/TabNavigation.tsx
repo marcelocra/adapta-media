@@ -13,9 +13,9 @@ export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
   const { t } = useLanguage();
 
   const tabs = [
+    { id: "preview", label: t.tabs.preview, icon: Eye },
     { id: "ads", label: t.tabs.ads, icon: BarChart3 },
     { id: "chat", label: t.tabs.chat, icon: MessageCircle },
-    { id: "preview", label: t.tabs.preview, icon: Eye },
   ];
 
   return (
