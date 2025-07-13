@@ -34,6 +34,164 @@ import { Spinner } from "../ui/spinner";
 import { useInsightsWebSocket } from "@/hooks/useInsightsWebSocket";
 import { useTypewriterEffect } from "@/hooks/useTypewriterEffect";
 
+// Componente para exibir dados do webcam como lista vertical
+const WebcamDataCards = ({ webcamData }: { webcamData: any }) => {
+  if (!webcamData) return null;
+
+  const { yolo, deepface } = webcamData;
+
+  // Mapear chaves para labels legíveis
+  const getLabel = (key: string): string => {
+    const labelMap: { [key: string]: string } = {
+      // Emotions
+      happy: "Feliz",
+      sad: "Triste",
+      angry: "Irritado",
+      fear: "Medo",
+      surprise: "Surpreso",
+      disgust: "Nojo",
+      neutral: "Neutro",
+      // Races
+      asian: "Asiático",
+      indian: "Indiano",
+      black: "Negro",
+      white: "Branco",
+      "middle eastern": "Oriente Médio",
+      "latino hispanic": "Latino",
+      // Gender
+      Man: "Homem",
+      Woman: "Mulher",
+      men: "Homens",
+      women: "Mulheres",
+      // Others
+      total: "Total",
+      confidence: "Confiança",
+    };
+    return labelMap[key] || key;
+  };
+
+  const formatValue = (value: number): string => {
+    if (!value && value !== 0) return "0";
+    return value <= 1 ? `${Math.round(value * 100)}%` : value.toString();
+  };
+
+  // Preparar dados sempre visíveis
+  const dataItems = [
+    {
+      label: "Pessoas Detectadas",
+      value: yolo?.total || 0,
+      extra: yolo?.confidence
+        ? `(${formatValue(yolo.confidence)} confiança)`
+        : "",
+    },
+    {
+      label: "Homens",
+      value: deepface?.men || 0,
+      extra: "",
+    },
+    {
+      label: "Mulheres",
+      value: deepface?.women || 0,
+      extra: "",
+    },
+    {
+      label: "Idade Média",
+      value: deepface?.age?.average
+        ? `${Math.round(deepface.age.average)} anos`
+        : "0 anos",
+      extra:
+        deepface?.age?.min !== deepface?.age?.max
+          ? `(${deepface?.age?.min || 0}-${deepface?.age?.max || 0} anos)`
+          : "",
+    },
+  ];
+
+  // Emoções - mostrar todas
+  const emotions = deepface?.emotion || {};
+  const emotionItems = Object.entries(emotions).map(([key, value]) => ({
+    label: getLabel(key),
+    value: formatValue(value as number),
+    extra: "",
+  }));
+
+  // Etnias - mostrar todas
+  const races = deepface?.race || {};
+  const raceItems = Object.entries(races).map(([key, value]) => ({
+    label: getLabel(key),
+    value: formatValue(value as number),
+    extra: "",
+  }));
+
+  return (
+    <div className="bg-gray-50 rounded-lg p-4 mb-4 border">
+      <h3 className="text-sm font-medium text-gray-700 mb-4">
+        Dados da Audiência
+      </h3>
+
+      <div className="space-y-3">
+        {/* Dados básicos */}
+        <div>
+          <h4 className="text-xs font-medium text-gray-600 mb-2">Detecção</h4>
+          <div className="space-y-1">
+            {dataItems.map((item, index) => (
+              <div
+                key={index}
+                className="flex justify-between items-center py-1"
+              >
+                <span className="text-sm text-gray-700">{item.label}</span>
+                <div className="text-right">
+                  <span className="text-sm font-medium">{item.value}</span>
+                  {item.extra && (
+                    <span className="text-xs text-gray-500 ml-1">
+                      {item.extra}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Emoções */}
+        {emotionItems.length > 0 && (
+          <div className="pt-3 border-t border-gray-200">
+            <h4 className="text-xs font-medium text-gray-600 mb-2">Emoções</h4>
+            <div className="space-y-1">
+              {emotionItems.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex justify-between items-center py-1"
+                >
+                  <span className="text-sm text-gray-700">{item.label}</span>
+                  <span className="text-sm font-medium">{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Etnias */}
+        {raceItems.length > 0 && (
+          <div className="pt-3 border-t border-gray-200">
+            <h4 className="text-xs font-medium text-gray-600 mb-2">Etnias</h4>
+            <div className="space-y-1">
+              {raceItems.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex justify-between items-center py-1"
+                >
+                  <span className="text-sm text-gray-700">{item.label}</span>
+                  <span className="text-sm font-medium">{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export function AdsList() {
   const [records, setRecords] = useState<IApiDisplayRecord[]>([]);
   const [selectedRecord, setSelectedRecord] =
@@ -314,9 +472,12 @@ export function AdsList() {
             if (!open) setSelectedRecord(null);
           }}
         >
-          <DialogContent className="min-w-[100vw] min-h-[100vh] overflow-y-auto">
-            <DialogHeader className="flex flex-row items-center justify-between gap-4">
-              <div className="flex items-center justify-between gap-4">
+          <DialogContent className="w-screen h-screen max-w-none max-h-none m-0 p-0 overflow-y-auto">
+            <DialogHeader className="flex flex-row items-start justify-between gap-4 p-6 border-b">
+              <div className="flex flex-col items-start gap-2">
+                <div className="text-lg font-semibold">
+                  {selectedRecord.title}
+                </div>
                 <Badge
                   variant="outline"
                   className={cn(
@@ -326,13 +487,14 @@ export function AdsList() {
                 >
                   {selectedRecord.status.toUpperCase()}
                 </Badge>
-                {selectedRecord.title}
               </div>
             </DialogHeader>
-            <div className="mb-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
                 <div>
                   <div className="max-h-[500px] overflow-y-auto border rounded">
+                    <WebcamDataCards webcamData={selectedRecord.webcam} />
+
                     <JsonViewComponent
                       record={selectedRecord}
                       classname="text-gray-800 prose prose-sm border rounded"
@@ -366,8 +528,8 @@ export function AdsList() {
                 </div>
               </div>
             </div>
-            <div>
-              <div className="flex gap-2 sticky top-4 justify-end">
+            <div className="border-t bg-white p-6">
+              <div className="flex gap-2 justify-end">
                 {/* {!selectedRecord.insights && ( */}
                 <button
                   onClick={() => generateInsights()}
