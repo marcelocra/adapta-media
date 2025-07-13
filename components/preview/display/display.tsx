@@ -29,11 +29,11 @@ export const Display = ({ data = Ads }) => {
 
     const webcamLogs: IWebcamData | null = webCamDataRef.current;
 
-    if (!webcamLogs?.yolo_summary || webcamLogs?.deepface_summary) return;
+    // if (!webcamLogs?.yolo_summary || webcamLogs?.deepface_summary) return;
 
     const body: IDisplayCreateRequest = {
       webcam: {
-        yolo: webcamLogs?.yolo_summary,
+        yolo: webcamLogs?.yolo_summary as any,
         deepface: webcamLogs?.deepface_summary as any,
       },
       type: currentItem.type,
@@ -44,12 +44,12 @@ export const Display = ({ data = Ads }) => {
       external_id: String(currentItem._id),
     };
 
-    console.log("Showed", body);
-    console.log(JSON.stringify(body));
+    // console.log("Showed", body);
+    // console.log(JSON.stringify(body));
 
-    if (body) {
-      return;
-    }
+    // if (body) {
+    //   return;
+    // }
 
     try {
       const response = await fetch(`http://${API_URL}/display`, {
@@ -82,7 +82,7 @@ export const Display = ({ data = Ads }) => {
     const timer = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
-          // logItemShowed();
+          logItemShowed();
           setCurrentIndex((prevIndex) => (prevIndex + 1) % data.length);
           return 0;
         }
