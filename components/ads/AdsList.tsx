@@ -37,6 +37,7 @@ import { Spinner } from "../ui/spinner";
 import { useInsightsWebSocket } from "@/hooks/useInsightsWebSocket";
 import { useTypewriterEffect } from "@/hooks/useTypewriterEffect";
 import { Ads } from "../preview/display/mock";
+import { useToast } from "@/hooks/use-toast";
 
 // Componente para exibir dados do webcam como lista vertical
 const WebcamDataCards = ({ webcamData }: { webcamData: any }) => {
@@ -204,6 +205,7 @@ export function AdsList() {
   const [error, setError] = useState(null);
   const [pagination, setPagination] =
     useState<IApiPagination>(ApiPaginationDefault);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchRecords();
@@ -332,31 +334,41 @@ export function AdsList() {
       });
       const data = await response.json();
       setInsightsJobStarted(true);
+
+      toast({
+        title: "Insights em progresso!",
+        variant: "success",
+      });
     } catch (error) {
+      toast({
+        title: "Erro",
+        description: `Falha gerar insights!`,
+        variant: "destructive",
+      });
       console.error("Erro ao gerar insights:", error);
     } finally {
       setGenerateInsightsLoading(false);
     }
   };
 
-  const [generateCopywriterLoading, setGenerateCopywriterLoading] =
-    useState<boolean>(false);
-  const generateCopywriter = async () => {
-    try {
-      setGenerateCopywriterLoading(true);
-      const response = await fetch(`http://${API_URL}/jobs/copywriter`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: selectedRecord?._id }),
-      });
-      const data = await response.json();
-      // Atualize o estado do selectedRecord com o novo copywriter
-    } catch (error) {
-      console.error("Erro ao gerar copywriter:", error);
-    } finally {
-      setGenerateCopywriterLoading(false);
-    }
-  };
+  // const [generateCopywriterLoading, setGenerateCopywriterLoading] =
+  //   useState<boolean>(false);
+  // const generateCopywriter = async () => {
+  //   try {
+  //     setGenerateCopywriterLoading(true);
+  //     const response = await fetch(`http://${API_URL}/jobs/copywriter`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ id: selectedRecord?._id }),
+  //     });
+  //     const data = await response.json();
+  //     // Atualize o estado do selectedRecord com o novo copywriter
+  //   } catch (error) {
+  //     console.error("Erro ao gerar copywriter:", error);
+  //   } finally {
+  //     setGenerateCopywriterLoading(false);
+  //   }
+  // };
 
   const containerRef = useRef<HTMLDivElement>(null);
 
