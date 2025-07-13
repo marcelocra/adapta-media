@@ -5,10 +5,12 @@ import { IWebcamData } from "@/interfaces/webcam";
 import { API_URL } from "@/lib/utils";
 import { IDisplayCreateRequest } from "@/interfaces/display";
 import { IAd } from "@/interfaces/ads";
+import { useToast } from "@/hooks/use-toast";
 
 export const Display = ({ data = Ads }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
+  const { toast } = useToast();
 
   const currentItem = data[currentIndex];
 
@@ -60,10 +62,26 @@ export const Display = ({ data = Ads }) => {
 
       const result = await response.json();
       console.log("Detecção enviada com sucesso:", result);
+
+      toast({
+        title: "Sucesso!",
+        description: (
+          <>
+            Exibição do <strong>{currentItem?.title}</strong> registrada!
+          </>
+        ),
+        variant: "success",
+      });
     } catch (error) {
       console.error("Erro ao enviar detecção:", error);
+
+      toast({
+        title: "Erro",
+        description: `Falha ao registrar exibição.`,
+        variant: "destructive",
+      });
     }
-  }, [currentItem, currentIndex]);
+  }, [currentItem, currentIndex, toast]);
 
   useEffect(() => {
     if (data.length === 0) return;
@@ -84,7 +102,7 @@ export const Display = ({ data = Ads }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [currentIndex, data]);
+  }, [currentIndex, data, logItemShowed]);
 
   if (!currentItem) return null;
 
