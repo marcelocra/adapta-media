@@ -18,6 +18,7 @@ function JsonViewComponent({ record, classname }: IJsonViewComponent) {
         overflowWrap: "break-word",
         wordBreak: "break-word",
         whiteSpace: "pre-wrap",
+        borderRadius: 10,
       }}
     >
       {record && (

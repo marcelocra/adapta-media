@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Table,
   TableBody,
@@ -10,7 +10,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Calendar, Users, Clock, X } from "lucide-react";
@@ -114,6 +119,12 @@ export function AdsList() {
   const insightsContent =
     insightsWebSocket.streamingContent || selectedRecord?.insights || "";
 
+  const showInsightsContent = () => {
+    const result =
+      selectedRecord?.insights &&
+      selectedRecord?.status?.toLowerCase() === "insights_completed";
+    return result;
+  };
   const { displayedText: displayedInsights, isTyping: isTypingInsights } =
     useTypewriterEffect({
       text: insightsContent,
@@ -172,6 +183,15 @@ export function AdsList() {
       setGenerateCopywriterLoading(false);
     }
   };
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll quando o conteúdo for atualizado
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [insightsContent, displayedInsights]);
 
   if (loading) {
     return (
@@ -294,7 +314,7 @@ export function AdsList() {
             if (!open) setSelectedRecord(null);
           }}
         >
-          <DialogContent className="max-w-[90vw] max-h-[90vh] overflow-y-auto">
+          <DialogContent className="min-w-[100vw] min-h-[100vh] overflow-y-auto">
             <DialogHeader className="flex flex-row items-center justify-between gap-4">
               <div className="flex items-center justify-between gap-4">
                 <Badge
@@ -311,67 +331,42 @@ export function AdsList() {
             </DialogHeader>
             <div className="mb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-                <div className="rounded-lg">
-                  {/* <h2 className="text-xl font-bold mb-4">Json</h2> */}
-                  <JsonViewComponent
-                    record={selectedRecord}
-                    classname="max-h-[400px]"
-                  />
+                <div>
+                  <div className="max-h-[500px] overflow-y-auto border rounded">
+                    <JsonViewComponent
+                      record={selectedRecord}
+                      classname="text-gray-800 prose prose-sm border rounded"
+                    />
+                  </div>
                 </div>
 
-                <div className="p-4 rounded-lg">
+                <div className="rounded-lg">
                   {/* <h2 className="text-xl font-bold mb-4">
                     LLM (NVIDIA llama-3.3-nemotron-super-49b-v1 NIM)
                   </h2> */}
-                  <div className="flex gap-4 items-start">
-                    <Accordion type="single" className="w-full">
-                      {(insightsContent || insightsWebSocket.isStreaming) && (
-                        <AccordionItem value="insights">
-                          <AccordionTrigger>
-                            Insights
-                            {insightsWebSocket.isStreaming && (
-                              <span className="ml-2 text-sm text-green-600 font-normal">
-                                (Streaming...)
-                              </span>
-                            )}
-                          </AccordionTrigger>
-                          <AccordionContent className="prose max-w-none max-h-[400px] overflow-y-auto">
-                            <MarkdownPreview
-                              source={
-                                insightsWebSocket.isStreaming
-                                  ? insightsContent
-                                  : displayedInsights
-                              }
-                              className="bg-white text-gray-900 prose"
-                            />
-                            {(isTypingInsights ||
-                              insightsWebSocket.isStreaming) && (
-                              <span className="inline-block w-2 h-5 bg-gray-600 ml-1 animate-pulse" />
-                            )}
-                            {insightsWebSocket.error && (
-                              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-                                <p className="text-red-800 text-sm">
-                                  Erro no WebSocket: {insightsWebSocket.error}
-                                </p>
-                              </div>
-                            )}
-                          </AccordionContent>
-                        </AccordionItem>
-                      )}
-                      {selectedRecord?.copywriter && (
-                        <AccordionItem value="copywriter">
-                          <AccordionTrigger>Copywriter</AccordionTrigger>
-                          <AccordionContent className="prose max-w-none max-h-[400px] overflow-y-auto">
-                            <MarkdownPreview
-                              source={selectedRecord?.copywriter}
-                            />
-                          </AccordionContent>
-                        </AccordionItem>
-                      )}
-                    </Accordion>
+                  <div className="flex-1 min-w-0">
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <div
+                        ref={containerRef}
+                        className="max-h-[500px] overflow-y-auto"
+                        style={{ scrollBehavior: "smooth" }}
+                      >
+                        <MarkdownPreview
+                          source={
+                            insightsWebSocket.isStreaming ||
+                            showInsightsContent()
+                              ? insightsContent
+                              : displayedInsights
+                          }
+                          className="text-gray-800 prose prose-sm"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
+            <div>
               <div className="flex gap-2 sticky top-4 justify-end">
                 {/* {!selectedRecord.insights && ( */}
                 <button

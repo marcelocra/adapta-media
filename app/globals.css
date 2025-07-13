@@ -80,3 +80,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+.wmde-markdown {
+  --color-canvas-default: transparent !important;
+  --color-fg-default: black !important; /* Cor principal do texto */
+  --color-fg-muted: blue !important; /* Texto secundário */
+  --color-fg-subtle: green !important; /* Texto sutil */
+}
