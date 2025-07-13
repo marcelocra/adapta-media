@@ -26,7 +26,8 @@ import {
 } from "@/components/ui/accordion";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import { Spinner } from "../ui/spinner";
-import { useJobPolling } from "@/hooks/useJobPolling";
+import { useInsightsWebSocket } from "@/hooks/useInsightsWebSocket";
+import { useTypewriterEffect } from "@/hooks/useTypewriterEffect";
 
 export function AdsList() {
   const [records, setRecords] = useState<IApiDisplayRecord[]>([]);
@@ -104,18 +105,37 @@ export function AdsList() {
     useState<boolean>(false);
   const [insightsJobStarted, setInsightsJobStarted] = useState<boolean>(false);
 
-  const insightsPolling = useJobPolling({
+  const insightsWebSocket = useInsightsWebSocket({
     recordId: selectedRecord?._id || "",
-    targetStatus: "insights_completed",
     enabled: insightsJobStarted && !!selectedRecord?._id,
   });
 
+  // Use streaming content from WebSocket instead of static record insights
+  const insightsContent =
+    insightsWebSocket.streamingContent || selectedRecord?.insights || "";
+
+  const { displayedText: displayedInsights, isTyping: isTypingInsights } =
+    useTypewriterEffect({
+      text: insightsContent,
+      speed: 20,
+      enabled: !!insightsContent && insightsWebSocket.isComplete,
+    });
+
   useEffect(() => {
-    if (insightsPolling.isComplete && insightsPolling.data) {
-      setSelectedRecord(insightsPolling.data);
+    if (insightsWebSocket.isComplete) {
+      // Update the selected record with the final content
+      setSelectedRecord((prev) =>
+        prev
+          ? {
+              ...prev,
+              insights: insightsWebSocket.fullContent,
+              status: "insights_completed",
+            }
+          : null,
+      );
       setInsightsJobStarted(false);
     }
-  }, [insightsPolling.isComplete, insightsPolling.data]);
+  }, [insightsWebSocket.isComplete, insightsWebSocket.fullContent]);
 
   const generateInsights = async () => {
     try {
@@ -305,14 +325,36 @@ export function AdsList() {
                   </h2> */}
                   <div className="flex gap-4 items-start">
                     <Accordion type="single" className="w-full">
-                      {selectedRecord.insights && (
+                      {(insightsContent || insightsWebSocket.isStreaming) && (
                         <AccordionItem value="insights">
-                          <AccordionTrigger>Insights</AccordionTrigger>
+                          <AccordionTrigger>
+                            Insights
+                            {insightsWebSocket.isStreaming && (
+                              <span className="ml-2 text-sm text-green-600 font-normal">
+                                (Streaming...)
+                              </span>
+                            )}
+                          </AccordionTrigger>
                           <AccordionContent className="prose max-w-none max-h-[400px] overflow-y-auto">
                             <MarkdownPreview
-                              source={selectedRecord.insights}
+                              source={
+                                insightsWebSocket.isStreaming
+                                  ? insightsContent
+                                  : displayedInsights
+                              }
                               className="bg-white text-gray-900 prose"
                             />
+                            {(isTypingInsights ||
+                              insightsWebSocket.isStreaming) && (
+                              <span className="inline-block w-2 h-5 bg-gray-600 ml-1 animate-pulse" />
+                            )}
+                            {insightsWebSocket.error && (
+                              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                                <p className="text-red-800 text-sm">
+                                  Erro no WebSocket: {insightsWebSocket.error}
+                                </p>
+                              </div>
+                            )}
                           </AccordionContent>
                         </AccordionItem>
                       )}
@@ -331,28 +373,27 @@ export function AdsList() {
                 </div>
               </div>
               <div className="flex gap-2 sticky top-4 justify-end">
-                {!selectedRecord.insights && (
-                  <button
-                    onClick={() => generateInsights()}
-                    className="px-4 py-2 rounded text-white whitespace-nowrap flex items-center gap-2 transition-colors
+                {/* {!selectedRecord.insights && ( */}
+                <button
+                  onClick={() => generateInsights()}
+                  className="px-4 py-2 rounded text-white whitespace-nowrap flex items-center gap-2 transition-colors
                bg-green-500 hover:bg-green-600 
                disabled:bg-green-900 disabled:cursor-not-allowed"
-                    disabled={
-                      generateInsightsLoading || insightsPolling.isPolling
-                    }
-                  >
-                    {(generateInsightsLoading || insightsPolling.isPolling) && (
-                      <Spinner size={15} />
-                    )}
-                    <span>
-                      {insightsPolling.isPolling
-                        ? "Aguardando Insights..."
-                        : generateInsightsLoading
-                          ? "Gerando Insights..."
-                          : "Gerar Insights"}
-                    </span>
-                  </button>
-                )}
+                  disabled={
+                    generateInsightsLoading || insightsWebSocket.isStreaming
+                  }
+                >
+                  {(generateInsightsLoading ||
+                    insightsWebSocket.isStreaming) && <Spinner size={15} />}
+                  <span>
+                    {insightsWebSocket.isStreaming
+                      ? "Streaming Insights..."
+                      : generateInsightsLoading
+                        ? "Gerando Insights..."
+                        : "Gerar Insights"}
+                  </span>
+                </button>
+                {/* )} */}
 
                 {!selectedRecord.copywriter && (
                   <button
