@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { initializeCamera, stopCamera } from "../camera";
+import { initializeCamera, stopCamera } from "@/lib/camera";
 
 // Mock navigator.mediaDevices
 const mockGetUserMedia = vi.fn();
