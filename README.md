@@ -1,6 +1,10 @@
 # Adapta Midia
 
+Preview
 [![Preview](doc/preview.gif)](doc/preview.gif)
+
+Insights
+[![Insights](doc/insights.gif)](doc/insights.gif)
 
 ## Project Creation
 
