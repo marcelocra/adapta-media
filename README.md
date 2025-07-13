@@ -1,5 +1,7 @@
 # Adapta Midia
 
+[![Preview](doc/preview.gif)](doc/preview.gif)
+
 ## Project Creation
 
 This project was created using the `shadcn` package:
