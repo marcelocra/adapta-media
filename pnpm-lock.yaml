@@ -196,6 +196,9 @@ importers:
       typescript:
         specifier: 5.2.2
         version: 5.2.2
+      typewriter-effect:
+        specifier: ^2.22.0
+        version: 2.22.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       vaul:
         specifier: ^0.9.9
         version: 0.9.9(@types/react-dom@18.2.7)(@types/react@18.2.22)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -4926,6 +4929,12 @@ packages:
       }
     engines: { node: ">= 14.16" }
 
+  performance-now@2.1.0:
+    resolution:
+      {
+        integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==,
+      }
+
   picocolors@1.1.1:
     resolution:
       {
@@ -5095,6 +5104,12 @@ packages:
     resolution:
       {
         integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==,
+      }
+
+  raf@3.4.1:
+    resolution:
+      {
+        integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==,
       }
 
   react-day-picker@8.10.1:
@@ -6031,6 +6046,15 @@ packages:
       }
     engines: { node: ">=14.17" }
     hasBin: true
+
+  typewriter-effect@2.22.0:
+    resolution:
+      {
+        integrity: sha512-01HCRYY462wT8Fxps/epwGCioZd/GMXY0aLKhFKrfJ5Xhgf54/SiDx7Oq7PoES5kGqOEAdW8FS8HYVM2WSvfhQ==,
+      }
+    peerDependencies:
+      react: ">=17.0.0"
+      react-dom: ">=17.0.0"
 
   unbox-primitive@1.1.0:
     resolution:
@@ -9717,6 +9741,8 @@ snapshots:
 
   pathval@2.0.1: {}
 
+  performance-now@2.1.0: {}
+
   picocolors@1.1.1: {}
 
   picomatch@2.3.1: {}
@@ -9797,6 +9823,10 @@ snapshots:
   punycode@2.3.1: {}
 
   queue-microtask@1.2.3: {}
+
+  raf@3.4.1:
+    dependencies:
+      performance-now: 2.1.0
 
   react-day-picker@8.10.1(date-fns@3.6.0)(react@18.2.0):
     dependencies:
@@ -10504,6 +10534,13 @@ snapshots:
       typescript: 5.2.2
 
   typescript@5.2.2: {}
+
+  typewriter-effect@2.22.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      prop-types: 15.8.1
+      raf: 3.4.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
 
   unbox-primitive@1.1.0:
     dependencies:

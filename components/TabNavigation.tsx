@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { BarChart3, MessageCircle, Eye } from "lucide-react";
+import { BarChart3, Eye } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
 interface TabNavigationProps {
@@ -15,7 +15,7 @@ export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
   const tabs = [
     { id: "preview", label: t.tabs.preview, icon: Eye },
     { id: "ads", label: t.tabs.ads, icon: BarChart3 },
-    { id: "chat", label: t.tabs.chat, icon: MessageCircle },
+    // { id: "chat", label: t.tabs.chat, icon: MessageCircle },
   ];
 
   return (
