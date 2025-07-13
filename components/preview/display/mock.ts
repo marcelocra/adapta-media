@@ -2,7 +2,7 @@ import { IAd } from "@/interfaces/ads";
 
 export const Ads: IAd[] = [
   {
-    _id: "64d8c9c79c24cdd0e15b32a6",
+    _id: "64fcb20519d2e6a0c3d56b7e",
     title: "Coca-Cola® Zero Sugar",
     type: "VIDEO",
     description:
@@ -28,15 +28,6 @@ export const Ads: IAd[] = [
     source: "/ads/2.mp4",
     seconds: 6,
   },
-  // {
-  //   _id: "64fcb20519d2e6a0c3d56b7e",
-  //   title: "Itaú Seguro Auto",
-  //   type: "VIDEO",
-  //   description:
-  //     "Este vídeo é um anúncio do Itaú Seguro Auto. Ele mostra um carro azul sendo atingido por trás, com o vidro quebrando. Em seguida, o logotipo do Itaú Seguro Auto aparece com o slogan 'Feito para você ficar tranquilo'",
-  //   source: "/ads/2.mp4",
-  //   seconds: 5,
-  // },
   {
     _id: "64e3189d76ac438fbd8ecb90",
     title: "McDonald's McCrispy",

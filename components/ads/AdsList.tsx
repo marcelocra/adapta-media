@@ -19,7 +19,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Calendar, Users, Clock, X } from "lucide-react";
-import { IApiDisplayRecord } from "@/interfaces/display";
+import {
+  IApiDisplayRecord,
+  IApiDisplayRecordWithAd,
+} from "@/interfaces/display";
 import { ApiPaginationDefault, IApiPagination } from "@/interfaces/pagination";
 import JsonViewComponent from "../json-view/JsonViewComponent";
 import { API_URL, cn } from "@/lib/utils";
@@ -33,6 +36,7 @@ import MarkdownPreview from "@uiw/react-markdown-preview";
 import { Spinner } from "../ui/spinner";
 import { useInsightsWebSocket } from "@/hooks/useInsightsWebSocket";
 import { useTypewriterEffect } from "@/hooks/useTypewriterEffect";
+import { Ads } from "../preview/display/mock";
 
 // Componente para exibir dados do webcam como lista vertical
 const WebcamDataCards = ({ webcamData }: { webcamData: any }) => {
@@ -193,9 +197,9 @@ const WebcamDataCards = ({ webcamData }: { webcamData: any }) => {
 };
 
 export function AdsList() {
-  const [records, setRecords] = useState<IApiDisplayRecord[]>([]);
+  const [records, setRecords] = useState<IApiDisplayRecordWithAd[]>([]);
   const [selectedRecord, setSelectedRecord] =
-    useState<IApiDisplayRecord | null>(null);
+    useState<IApiDisplayRecordWithAd | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [pagination, setPagination] =
@@ -215,8 +219,15 @@ export function AdsList() {
       }
 
       const data = await response.json();
-      setRecords(data.records);
-      setSelectedRecord(data.records?.[0] || null);
+
+      const recordsWithAd = data.records.map((item: IApiDisplayRecord) => {
+        const currentAd = Ads.find((ad) => ad._id === item.external_id);
+
+        return { ...item, ad: currentAd || null };
+      });
+
+      setRecords(() => recordsWithAd);
+      // setSelectedRecord(recordsWithAd?.[0] || null);
       setPagination({
         page: data.page,
         limit: data.limit,
@@ -394,9 +405,9 @@ export function AdsList() {
           </TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">ID</TableHead>
+              <TableHead className="w-[100px]">Anúncio</TableHead>
+              <TableHead>ID</TableHead>
               <TableHead>Título</TableHead>
-              <TableHead>Tipo</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-center">Pessoas</TableHead>
               <TableHead className="text-center">Duração</TableHead>
@@ -407,6 +418,16 @@ export function AdsList() {
           <TableBody>
             {records.map((record) => (
               <TableRow key={record._id}>
+                <TableCell>
+                  <video
+                    src={record?.ad?.source}
+                    className="w-32 aspect-video object-cover rounded-lg"
+                    muted
+                    preload="metadata"
+                    autoPlay
+                    loop
+                  />
+                </TableCell>
                 <TableCell className="font-mono text-sm">
                   {record._id.slice(-8)}
                 </TableCell>
@@ -417,14 +438,6 @@ export function AdsList() {
                       {record.description}
                     </p>
                   </div>
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant="outline"
-                    className={getTypeColor(record.type)}
-                  >
-                    {record.type}
-                  </Badge>
                 </TableCell>
                 <TableCell>
                   <Badge
@@ -479,19 +492,32 @@ export function AdsList() {
         >
           <DialogContent className="w-screen h-screen max-w-none max-h-none m-0 p-0 overflow-y-auto">
             <DialogHeader className="flex flex-row items-start justify-between gap-4 p-6 border-b">
-              <div className="flex flex-col items-start gap-2">
-                <div className="text-lg font-semibold">
-                  {selectedRecord.title}
+              <div className="flex items-center gap-4">
+                {/* Vídeo como miniatura */}
+                <video
+                  src={selectedRecord?.ad?.source}
+                  className="w-32 aspect-video object-cover rounded-lg"
+                  muted
+                  preload="metadata"
+                  autoPlay
+                  loop
+                />
+
+                {/* Título e Badge */}
+                <div className="flex flex-col gap-2">
+                  <div className="text-lg font-semibold">
+                    {selectedRecord.title}
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "text-sm font-medium px-3 py-1 rounded-full border-2 w-fit",
+                      getStatusColor(selectedRecord.status),
+                    )}
+                  >
+                    {selectedRecord.status.toUpperCase()}
+                  </Badge>
                 </div>
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    "text-sm font-medium px-3 py-1 rounded-full border-2",
-                    getStatusColor(selectedRecord.status),
-                  )}
-                >
-                  {selectedRecord.status.toUpperCase()}
-                </Badge>
               </div>
             </DialogHeader>
             <div className="flex-1 overflow-y-auto">

@@ -1,3 +1,4 @@
+import { IAd } from "./ads";
 import { IApiPagination } from "./pagination";
 
 export interface IDisplayCreateRequest {
@@ -99,4 +100,8 @@ export interface IApiDisplayRecord {
 
 export interface IApiDisplaysResponse extends IApiPagination {
   records: IApiDisplayRecord[];
+}
+
+export interface IApiDisplayRecordWithAd extends IApiDisplayRecord {
+  ad: IAd | null;
 }
