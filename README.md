@@ -70,10 +70,10 @@ O **Adapta Mídia** é uma solução inovadora que combina **visão computaciona
 
 🔗 **[Adapta Mídia API](https://github.com/velrino/adapta-midia-api)**
 
-- API Python com FastAPI
-- Processamento de visão computacional (YOLO + Deepface)
-- Integração com NVIDIA LLAMA 3.3
-- WebSocket para streaming de dados
+- API Python com [FastAPI](https://fastapi.tiangolo.com/tutorial/)
+- Processamento de visão computacional ([YOLO](https://docs.ultralytics.com/pt/models/yolo11/) + [Deepface](https://pypi.org/project/deepface/))
+- Integração com [NVIDIA LLAMA 3.3](https://build.nvidia.com/nvidia/llama-3_3-nemotron-super-49b-v1)
+- [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) para streaming de dados
 
 ## 🚀 Como Executar
 
