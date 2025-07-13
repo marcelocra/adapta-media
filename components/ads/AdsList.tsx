@@ -262,33 +262,28 @@ export function AdsList() {
                   variant="outline"
                   className={cn(
                     "text-sm font-medium px-3 py-1 rounded-full border-2",
-                    getTypeColor(selectedRecord.type),
-                  )}
-                >
-                  {selectedRecord.type}
-                </Badge>
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    "text-sm font-medium px-3 py-1 rounded-full border-2",
                     getStatusColor(selectedRecord.status),
                   )}
                 >
                   {selectedRecord.status.toUpperCase()}
                 </Badge>
+                {selectedRecord.title}
               </div>
             </DialogHeader>
             <div className="mb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
                 <div className="rounded-lg">
                   {/* <h2 className="text-xl font-bold mb-4">Json</h2> */}
-                  <JsonViewComponent record={selectedRecord} />{" "}
+                  <JsonViewComponent
+                    record={selectedRecord}
+                    classname="max-h-[400px]"
+                  />
                 </div>
 
                 <div className="p-4 rounded-lg">
-                  <h2 className="text-xl font-bold mb-4">
+                  {/* <h2 className="text-xl font-bold mb-4">
                     LLM (NVIDIA llama-3.3-nemotron-super-49b-v1 NIM)
-                  </h2>
+                  </h2> */}
                   <div className="flex gap-4 items-start">
                     <Accordion type="single" className="w-full">
                       {selectedRecord.insights && (
@@ -313,45 +308,43 @@ export function AdsList() {
                         </AccordionItem>
                       )}
                     </Accordion>
-
-                    {/* Coluna de botões */}
-                    <div className="flex flex-col gap-2 sticky top-4">
-                      {!selectedRecord.insights && (
-                        <button
-                          onClick={() => generateInsights()}
-                          className="px-4 py-2 rounded text-white whitespace-nowrap flex items-center gap-2 transition-colors
-               bg-green-500 hover:bg-green-600 
-               disabled:bg-green-900 disabled:cursor-not-allowed"
-                          disabled={generateInsightsLoading}
-                        >
-                          {generateInsightsLoading && <Spinner size={15} />}
-                          <span>
-                            {generateInsightsLoading
-                              ? "Gerando Insights..."
-                              : "Gerar Insights"}
-                          </span>
-                        </button>
-                      )}
-
-                      {!selectedRecord.copywriter && (
-                        <button
-                          onClick={() => generateCopywriter()}
-                          className="px-4 py-2 rounded text-white whitespace-nowrap flex items-center gap-2 transition-colors
-               bg-green-500 hover:bg-green-600 
-               disabled:bg-green-900 disabled:cursor-not-allowed"
-                          disabled={generateCopywriterLoading}
-                        >
-                          {generateCopywriterLoading && <Spinner size={15} />}
-                          <span>
-                            {generateCopywriterLoading
-                              ? "Gerando Copywriter..."
-                              : "Gerar Copywriter"}
-                          </span>
-                        </button>
-                      )}
-                    </div>
                   </div>
                 </div>
+              </div>
+              <div className="flex gap-2 sticky top-4 justify-end">
+                {!selectedRecord.insights && (
+                  <button
+                    onClick={() => generateInsights()}
+                    className="px-4 py-2 rounded text-white whitespace-nowrap flex items-center gap-2 transition-colors
+               bg-green-500 hover:bg-green-600 
+               disabled:bg-green-900 disabled:cursor-not-allowed"
+                    disabled={generateInsightsLoading}
+                  >
+                    {generateInsightsLoading && <Spinner size={15} />}
+                    <span>
+                      {generateInsightsLoading
+                        ? "Gerando Insights..."
+                        : "Gerar Insights"}
+                    </span>
+                  </button>
+                )}
+
+                {!selectedRecord.copywriter && (
+                  <button
+                    onClick={() => generateCopywriter()}
+                    className="px-4 py-2 rounded text-white whitespace-nowrap flex items-center gap-2 transition-colors
+               bg-green-500 hover:bg-green-600 
+               disabled:bg-green-900 disabled:cursor-not-allowed"
+                    disabled={generateCopywriterLoading}
+                  >
+                    {generateCopywriterLoading && <Spinner size={15} />}
+                    <span>
+                      {generateCopywriterLoading
+                        ? "Gerando Copywriter..."
+                        : "Gerar Copywriter"}
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
           </DialogContent>
