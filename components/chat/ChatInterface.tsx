@@ -13,19 +13,23 @@ export function ChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
 
   useEffect(() => {
-    const history = getChatHistory();
-    if (history.length === 0) {
-      // Add welcome message
-      const welcomeMessage = addMessage(t.chat.welcome, "assistant");
-      setMessages([welcomeMessage]);
-    } else {
-      setMessages(history);
+    if (!isInitialized) {
+      const history = getChatHistory();
+      if (history.length === 0) {
+        // Add welcome message
+        const welcomeMessage = addMessage(t.chat.welcome, "assistant");
+        setMessages([welcomeMessage]);
+      } else {
+        setMessages(history);
+      }
+      setIsInitialized(true);
     }
-  }, [t.chat.welcome]);
+  }, [t.chat.welcome, isInitialized]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,20 +39,20 @@ export function ChatInterface() {
     if (!inputValue.trim() || isLoading) return;
 
     const userMessage = addMessage(inputValue.trim(), "user");
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages(getChatHistory());
     setInputValue("");
     setIsLoading(true);
 
     try {
       const aiResponse = await sendMessageToAI(userMessage.content);
       const assistantMessage = addMessage(aiResponse, "assistant");
-      setMessages((prev) => [...prev, assistantMessage]);
+      setMessages(getChatHistory());
     } catch (error) {
       const errorMessage = addMessage(
         "Sorry, I encountered an error. Please try again.",
         "assistant",
       );
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages(getChatHistory());
     } finally {
       setIsLoading(false);
     }
