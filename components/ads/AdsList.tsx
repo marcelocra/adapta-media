@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/accordion";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import { Spinner } from "../ui/spinner";
+import { useJobPolling } from "@/hooks/useJobPolling";
 
 export function AdsList() {
   const [records, setRecords] = useState<IApiDisplayRecord[]>([]);
@@ -101,14 +102,31 @@ export function AdsList() {
 
   const [generateInsightsLoading, setGenerateInsightsLoading] =
     useState<boolean>(false);
+  const [insightsJobStarted, setInsightsJobStarted] = useState<boolean>(false);
+
+  const insightsPolling = useJobPolling({
+    recordId: selectedRecord?._id || "",
+    targetStatus: "insights_completed",
+    enabled: insightsJobStarted && !!selectedRecord?._id,
+  });
+
+  useEffect(() => {
+    if (insightsPolling.isComplete && insightsPolling.data) {
+      setSelectedRecord(insightsPolling.data);
+      setInsightsJobStarted(false);
+    }
+  }, [insightsPolling.isComplete, insightsPolling.data]);
+
   const generateInsights = async () => {
     try {
       setGenerateInsightsLoading(true);
       const response = await fetch(`http://${API_URL}/jobs/insights`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: selectedRecord?._id }),
       });
       const data = await response.json();
+      setInsightsJobStarted(true);
     } catch (error) {
       console.error("Erro ao gerar insights:", error);
     } finally {
@@ -123,6 +141,7 @@ export function AdsList() {
       setGenerateCopywriterLoading(true);
       const response = await fetch(`http://${API_URL}/jobs/copywriter`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: selectedRecord?._id }),
       });
       const data = await response.json();
@@ -318,13 +337,19 @@ export function AdsList() {
                     className="px-4 py-2 rounded text-white whitespace-nowrap flex items-center gap-2 transition-colors
                bg-green-500 hover:bg-green-600 
                disabled:bg-green-900 disabled:cursor-not-allowed"
-                    disabled={generateInsightsLoading}
+                    disabled={
+                      generateInsightsLoading || insightsPolling.isPolling
+                    }
                   >
-                    {generateInsightsLoading && <Spinner size={15} />}
+                    {(generateInsightsLoading || insightsPolling.isPolling) && (
+                      <Spinner size={15} />
+                    )}
                     <span>
-                      {generateInsightsLoading
-                        ? "Gerando Insights..."
-                        : "Gerar Insights"}
+                      {insightsPolling.isPolling
+                        ? "Aguardando Insights..."
+                        : generateInsightsLoading
+                          ? "Gerando Insights..."
+                          : "Gerar Insights"}
                     </span>
                   </button>
                 )}
