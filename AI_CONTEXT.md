@@ -133,29 +133,31 @@ pnpm format
 - Centralized utility functions (e.g., `getStatusColor` in `lib/utils.ts`)
 - Consistent import paths and component organization
 - TypeScript types properly scoped to features
+- Co-located test files next to their corresponding source files
+- Test import paths updated to match new feature structure
 
 ### 🚀 Improvement Opportunities
 
-- **Utility Functions:** Move `formatNumber` and `formatCurrency` from components to `lib/utils.ts`
-- **Type Safety:** Replace `string` with union types for better type safety (e.g., `TabId = "ads" | "chat" | "preview"`)
+- **Utility Functions:** Move `formatNumber` and `formatCurrency` from components to `lib/utils.ts` (duplicated in AdCard, AdsList, AdDetails)
+- **Type Safety:** Replace `string` with union types for better type safety (e.g., `TabId = "ads" | "chat" | "preview"` in TabContext)
 - **URL Persistence:** Sync tab state with URL parameters for better UX
-- **Cleanup:** Remove deprecated `hooks/useLanguage.ts` and empty component folders
-- **Performance:** Add memoization for expensive operations and component re-renders
+- **Cleanup:** Empty component folders exist (`components/ads/`, `components/chat/`, `components/preview/`)
+- **Performance:** Add memoization for expensive operations and component re-renders (no `React.memo`, `useMemo`, or `useCallback` in custom components)
 
 ### 📋 Missing Features
 
-- Error boundaries for better error handling
-- Loading states and error states throughout the application
-- Comprehensive test coverage for feature hooks and components
-- Accessibility improvements (ARIA labels, keyboard navigation)
-- SEO optimizations and meta tag management
+- **Error Boundaries:** No error boundaries implemented for error handling
+- **Loading States:** Missing loading and error states throughout the application
+- **Test Coverage:** Limited test coverage - only API functions tested, no component or hook tests
+- **Accessibility:** Basic ARIA support only in shadcn/ui components, custom components lack accessibility features
+- **SEO & Meta Tags:** No dynamic meta tag management or SEO optimizations
 
 ## Coding Style and Conventions
 
 - Follow the existing coding style and conventions.
 - Use the provided UI components from `shadcn/ui` and Radix UI.
 - Ensure all new code is properly typed with TypeScript.
-- Add tests for new features and bug fixes in the `lib/__tests__` directory.
+- Add test files next to their corresponding source files using `{filename}.test.ts` pattern.
 - Keep the i18n files in `i18n/` updated with any new text.
 - Place feature-specific code in the appropriate `features/{feature}/` directory.
 - Use React Context for global state, custom hooks for feature logic.
