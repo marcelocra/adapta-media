@@ -54,7 +54,7 @@ export function PreviewTab() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
@@ -123,7 +123,7 @@ export function PreviewTab() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+          <div className="aspect-video bg-muted rounded-lg overflow-hidden lg:h-[400px]">
             {cameraError ? (
               <div className="h-full flex items-center justify-center">
                 <p className="text-muted-foreground text-center">
