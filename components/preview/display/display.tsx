@@ -14,7 +14,7 @@ export const Display = ({ data = Ads }) => {
 
   // Determine display duration
   const getDisplayDuration = (item: IAd) => {
-    return 2;
+    return 5;
   };
 
   const { webCamData } = useWebcam();
@@ -154,16 +154,13 @@ export const Display = ({ data = Ads }) => {
 
   return (
     <>
-      <div className="w-full aspect-videol">
+      <div className="w-full aspect-video bg-black rounded-lg overflow-hidden shadow-2xl">
         {renderAdvertisement(currentItem)}
       </div>
-      <div
-        className="text-sm font-bold
-"
-      >
-        {currentItem.title}
+      <div className="flex flex-col items-center">
+        <div className="text-sm font-bold text-center">{currentItem.title}</div>
+        <div className="text-xs text-center">{currentItem.description}</div>
       </div>
-      <div className="text-xs">{currentItem.description}</div>
     </>
   );
 };
