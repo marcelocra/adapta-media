@@ -8,6 +8,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { getAllAds } from "@/lib/ads";
 import { initializeCamera, stopCamera } from "@/lib/camera";
 import type { Ad } from "@/types";
+import WebcamFeed from "./Webcam";
 
 export function PreviewTab() {
   const [activeAd, setActiveAd] = useState<Ad | null>(null);
@@ -54,103 +55,11 @@ export function PreviewTab() {
   };
 
   return (
-    <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            {t.preview.activeAd}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const ads = getAllAds();
-                const currentIndex = ads.findIndex(
-                  (ad) => ad.id === activeAd?.id,
-                );
-                const nextIndex = (currentIndex + 1) % ads.length;
-                setActiveAd(ads[nextIndex]);
-              }}
-            >
-              Next Ad
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {activeAd ? (
-            <div className="space-y-4">
-              <div className="p-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg text-white">
-                <h3 className="text-xl font-bold mb-2">{activeAd.title}</h3>
-                <p className="text-blue-100">{activeAd.campaign}</p>
-                <div className="mt-4 flex items-center gap-4 text-sm">
-                  <span>
-                    {activeAd.impressions.toLocaleString()} impressions
-                  </span>
-                  <span>{activeAd.clicks.toLocaleString()} clicks</span>
-                  <span>{activeAd.ctr.toFixed(2)}% CTR</span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <p className="text-muted-foreground text-center py-8">
-              {t.preview.noActiveAd}
-            </p>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            {t.preview.cameraPreview}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleCamera}
-              className="flex items-center gap-2"
-            >
-              {isCameraOn ? (
-                <>
-                  <CameraOff className="h-4 w-4" />
-                  Stop
-                </>
-              ) : (
-                <>
-                  <Camera className="h-4 w-4" />
-                  Start
-                </>
-              )}
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="aspect-video bg-muted rounded-lg overflow-hidden lg:h-[400px]">
-            {cameraError ? (
-              <div className="h-full flex items-center justify-center">
-                <p className="text-muted-foreground text-center">
-                  {t.preview.cameraError}: {cameraError}
-                </p>
-              </div>
-            ) : isCameraOn ? (
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="h-full flex items-center justify-center">
-                <div className="text-center">
-                  <Camera className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    Click "Start" to begin camera preview
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-12 gap-4">
+      <div className="col-span-8 dark:bg-gray-900 p-4">DISPLAY</div>
+      <div className="col-span-4 dark:bg-gray-900 p-4">
+        <WebcamFeed />
+      </div>
     </div>
   );
 }

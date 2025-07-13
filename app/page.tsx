@@ -9,7 +9,7 @@ import { PreviewTab } from "@/components/preview/PreviewTab";
 import { useLanguage } from "@/hooks/useLanguage";
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState("ads");
+  const [activeTab, setActiveTab] = useState("preview");
   const { t } = useLanguage();
 
   const renderTabContent = () => {
@@ -39,7 +39,7 @@ export default function HomePage() {
         <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       </header>
 
-      <main className="container px-4 py-6">{renderTabContent()}</main>
+      <main>{renderTabContent()}</main>
     </div>
   );
 }
