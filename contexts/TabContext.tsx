@@ -1,16 +1,17 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import type { TabId } from "@/types";
 
 type TabContextType = {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
+  activeTab: TabId;
+  setActiveTab: (tab: TabId) => void;
 };
 
 const TabContext = createContext<TabContextType | undefined>(undefined);
 
 export function TabProvider({ children }: { children: ReactNode }) {
-  const [activeTab, setActiveTab] = useState("ads");
+  const [activeTab, setActiveTab] = useState<TabId>("ads");
 
   return (
     <TabContext.Provider value={{ activeTab, setActiveTab }}>

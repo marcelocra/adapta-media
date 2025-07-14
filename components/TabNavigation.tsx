@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { BarChart3, MessageCircle, Eye } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { useTab } from "@/contexts/TabContext";
+import type { TabId } from "@/types";
 
 export function TabNavigation() {
   const { t } = useLanguage();
   const { activeTab, setActiveTab } = useTab();
 
-  const tabs = [
+  const tabs: { id: TabId; label: string; icon: any }[] = [
     { id: "ads", label: t.tabs.ads, icon: BarChart3 },
     { id: "chat", label: t.tabs.chat, icon: MessageCircle },
     { id: "preview", label: t.tabs.preview, icon: Eye },
